@@ -1,12 +1,8 @@
 language: ruby
 rvm:
   - 2.2.3
-  - 2.2.2
-  - 2.1.6
-  - 2.1.4
-  - 2.1.3
 before_install:
-  - gem install bundler
+  - gem install coveralls
 script: "ruby ./test/test_all.rb"
 branches:
   only:
