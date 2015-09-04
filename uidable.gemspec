@@ -10,6 +10,10 @@ Gem::Specification.new do |spec|
   spec.email         = ["sibevin@gmail.com"]
 
   spec.summary       = %q{Create the uid attribute in your model or class.}
+  spec.description   = <<-EOF
+    Uidable is a module to add a uid(unique identifier) attribute in your model or class.
+    With ActiveRecord, the presence and uniqueness validations are supported.
+  EOF
   spec.homepage      = "https://github.com/sibevin/uidable"
   spec.license       = "MIT"
 
