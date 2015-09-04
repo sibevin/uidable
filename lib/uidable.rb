@@ -1,8 +1,6 @@
 require "uidable/version"
-require "pry-byebug"
 
 module Uidable
-
   DEFAULT_UID_SIZE = 32
 
   def self.included(base)
