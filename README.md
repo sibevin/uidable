@@ -1,5 +1,13 @@
 # Uidable
 
+[![Gem Version](https://badge.fury.io/rb/uidable.svg)][gem]
+[![Build Status](https://travis-ci.org/sibevin/uidable.svg?branch=build)][travis]
+[![Coverage Status](https://coveralls.io/repos/sibevin/uidable/badge.svg?branch=cover-check&service=github)][coveralls]
+
+[gem]: https://rubygems.org/gems/uidable
+[travis]: https://travis-ci.org/sibevin/uidable
+[coveralls]: https://coveralls.io/github/sibevin/uidable?branch=cover-check
+
 Create the uid(unqiue identifier) attribute in your model or class.
 
 ## Installation
