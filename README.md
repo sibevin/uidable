@@ -93,7 +93,7 @@ The uid is read only by default. You can disabled it with `read_only: false`.
 ### Uniqueness and Presence Validation
 
 The uniqueness and presence validation is enabled by default. You can disable them with `uniqueness: false` and `presence: false`. Note that you should change your migration as well if needed.
-
+
 ### Set to_param
 
 If the option `set_to_param: true` is given, the `to_param` is overrided with uid and it means you can use uid in your routes path.
@@ -111,7 +111,7 @@ You override `gen_uid` method in your class/model if you want to generate your o
     class MyModel < ActiveRecord::Base
       include Uidable
       uidable
-
+
       private
 
       def gen_uid
