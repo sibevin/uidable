@@ -1,5 +1,13 @@
 # Uidable
 
+[![Gem Version](https://badge.fury.io/rb/uidable.svg)][gem]
+[![Build Status](https://travis-ci.org/sibevin/uidable.svg?branch=build)][travis]
+[![Coverage Status](https://coveralls.io/repos/sibevin/uidable/badge.svg?branch=cover-check&service=github)][coveralls]
+
+[gem]: https://rubygems.org/gems/uidable
+[travis]: https://travis-ci.org/sibevin/uidable
+[coveralls]: https://coveralls.io/github/sibevin/uidable?branch=cover-check
+
 Create the uid(unqiue identifier) attribute in your model or class.
 
 ## Installation
@@ -85,7 +93,7 @@ The uid is read only by default. You can disabled it with `read_only: false`.
 ### Uniqueness and Presence Validation
 
 The uniqueness and presence validation is enabled by default. You can disable them with `uniqueness: false` and `presence: false`. Note that you should change your migration as well if needed.
-
+
 ### Set to_param
 
 If the option `set_to_param: true` is given, the `to_param` is overrided with uid and it means you can use uid in your routes path.
@@ -96,14 +104,14 @@ If the option `scope: true` is given, a scope `with_uid` is created and you can 
 
 ## Redefine Uid Generation
 
-You override `gen_uid` method in your class/model if you want to generate your own uid. Here is an example:
+You can override `gen_uid` method in your class/model if you want to generate your own uid. Here is an example:
 
     require `random_token`
 
     class MyModel < ActiveRecord::Base
       include Uidable
       uidable
-
+
       private
 
       def gen_uid

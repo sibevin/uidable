@@ -54,7 +54,7 @@ module Uidable
         end
 
         def gen_uid
-          Array.new(#{uid_size}){[*'a'..'b', *'0'..'9'].sample}.join
+          Array.new(#{uid_size}){[*'a'..'z', *'0'..'9'].sample}.join
         end
       RUBY
       include mod
