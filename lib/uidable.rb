@@ -5,6 +5,24 @@ module Uidable
 
   def self.included(base)
     base.extend ClassMethods
+    unless defined?(::ActiveRecord::Base) && base < ::ActiveRecord::Base
+      base.prepend InitUid
+    end
+
+    private
+
+    def uidable_cols_init
+      self.class.uidable_cols.each do |col|
+        instance_variable_set("@#{col}", send("gen_#{col}"))
+      end
+    end
+  end
+
+  module InitUid
+    def initialize
+      uidable_cols_init
+      super
+    end
   end
 
   module ClassMethods
@@ -16,48 +34,48 @@ module Uidable
         uniqueness: true,
         set_to_param: false,
         scope: false)
-      mod = Module.new
-      mod.module_eval <<-RUBY, __FILE__, __LINE__ + 1
-        def self.included(base)
-          if defined?(::ActiveRecord::Base) && base < ::ActiveRecord::Base
-            base.before_validation :assign_uid, on: :create
-            #{ scope ? "base.scope :'with_#{uid_name}', -> (uid) { base.where(:'#{uid_name}' => uid) }" : "" }
-            #{ set_to_param ? "base.include SetToParam" : "" }
-            #{ read_only ? "base.attr_readonly :'#{uid_name}'" : "" }
-          else
-            base.prepend InitUid
-            #{ read_only ? "attr_reader :'#{uid_name}'" : "attr_accessor :'#{uid_name}'" }
+      unless uidable_cols.include?(uid_name.to_sym)
+        uidable_cols << uid_name.to_sym
+        mod = Module.new
+        mod.module_eval <<-RUBY, __FILE__, __LINE__ + 1
+          def self.included(base)
+            if defined?(::ActiveRecord::Base) && base < ::ActiveRecord::Base
+              base.before_validation :uidable_assign_#{uid_name}, on: :create
+              #{ scope ? "base.scope :'with_#{uid_name}', -> (uid) { base.where(:'#{uid_name}' => uid) }" : "" }
+              #{ set_to_param ? "base.include SetToParam#{uid_name}" : "" }
+              #{ read_only ? "base.attr_readonly :'#{uid_name}'" : "" }
+            else
+              #{ read_only ? "attr_reader :'#{uid_name}'" : "attr_accessor :'#{uid_name}'" }
+            end
+            if base.respond_to?(:validates)
+              #{ presence ? "base.validates :'#{uid_name}', presence: true" : "" }
+              #{ uniqueness ? "base.validates :'#{uid_name}', uniqueness: true" : "" }
+            end
           end
-          if base.respond_to?(:validates)
-            #{ presence ? "base.validates :'#{uid_name}', presence: true" : "" }
-            #{ uniqueness ? "base.validates :'#{uid_name}', uniqueness: true" : "" }
+
+          module SetToParam#{uid_name}
+            def to_param
+              self.#{uid_name}
+            end
           end
-        end
 
-        module InitUid
-          def initialize
-            @#{uid_name} = gen_uid
-            super
+          private
+
+          def uidable_assign_#{uid_name}
+            self.#{uid_name} = gen_#{uid_name}
           end
-        end
 
-        module SetToParam
-          def to_param
-            self.#{uid_name}
+          def gen_#{uid_name}
+            Array.new(#{uid_size}){[*'a'..'z', *'0'..'9'].sample}.join
           end
-        end
+        RUBY
+        include mod
+      end
+    end
 
-        private
-
-        def assign_uid
-          self.#{uid_name} = gen_uid
-        end
-
-        def gen_uid
-          Array.new(#{uid_size}){[*'a'..'z', *'0'..'9'].sample}.join
-        end
-      RUBY
-      include mod
+    def uidable_cols
+      @uidable_cols ||= []
     end
   end
+
 end
