@@ -50,6 +50,20 @@ ActiveRecord::Base.connection.instance_eval do
     t.string :uid, null: false
   end
   add_index :user9s, :uid, unique: true
+
+  create_table :multi_users do |t|
+    t.string :uid, null: false
+    t.string :slug, null: false
+  end
+  add_index :multi_users, :uid, unique: true
+  add_index :multi_users, :slug, unique: true
+
+  create_table :multi_user2s do |t|
+    t.string :uuid, null: false
+    t.string :slug, null: false
+  end
+  add_index :multi_user2s, :uuid, unique: true
+  add_index :multi_user2s, :slug, unique: true
 end
 
 class User < ActiveRecord::Base
@@ -97,6 +111,22 @@ class User9 < ActiveRecord::Base
   uidable
   UID_SIZE = 128
   def gen_uid
+    Array.new(UID_SIZE){[*'0'..'9'].sample}.join
+  end
+end
+
+class MultiUser < ActiveRecord::Base
+  include Uidable
+  uidable
+  uidable uid_name: "slug"
+end
+
+class MultiUser2 < ActiveRecord::Base
+  include Uidable
+  uidable uid_name: "uuid"
+  uidable uid_name: "slug"
+  UID_SIZE = 128
+  def gen_uuid
     Array.new(UID_SIZE){[*'0'..'9'].sample}.join
   end
 end
@@ -218,5 +248,38 @@ describe Uidable do
     u = User9.create
     u.uid.size.must_equal User9::UID_SIZE
     u.uid.must_match(/^[0-9]{#{User9::UID_SIZE}}$/)
+  end
+
+  describe "multi" do
+    it "should respond to the uid attribute" do
+      u = MultiUser.new
+      u.respond_to?(:uid).must_equal true
+      u.respond_to?(:slug).must_equal true
+    end
+
+    it "should assign the uid with 32-bit length string when record is created" do
+      u = MultiUser.new
+      u.uid.must_equal nil
+      u.slug.must_equal nil
+      u.save!
+      u.uid.must_match(/^[a-z0-9]{#{Uidable::DEFAULT_UID_SIZE}}$/)
+      u.slug.must_match(/^[a-z0-9]{#{Uidable::DEFAULT_UID_SIZE}}$/)
+      u.uid.wont_equal u.slug
+    end
+
+    it 'should change the uid attribute name with given uid_name' do
+      u = MultiUser2.new
+      u.respond_to?(:uid).must_equal false
+      u.must_respond_to :uuid
+      u.must_respond_to :slug
+      u.save!
+      u.slug.must_match(/^[a-z0-9]{#{Uidable::DEFAULT_UID_SIZE}}$/)
+    end
+
+    it "can override uid generation by given a customized gen_uid method" do
+      u = MultiUser2.create
+      u.uuid.size.must_equal MultiUser2::UID_SIZE
+      u.uuid.must_match(/^[0-9]{#{MultiUser2::UID_SIZE}}$/)
+    end
   end
 end
