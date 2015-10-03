@@ -104,7 +104,7 @@ If the option `scope: true` is given, a scope `with_uid` is created and you can 
 
 ## Redefine Uid Generation
 
-You can override `gen_uid` method in your class/model if you want to generate your own uid. Here is an example:
+You can override `gen_<name>` method in your class/model if you want to generate your own uid. Here is an example:
 
     require `random_token`
 
