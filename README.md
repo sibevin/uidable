@@ -8,7 +8,7 @@
 [travis]: https://travis-ci.org/sibevin/uidable
 [coveralls]: https://coveralls.io/github/sibevin/uidable?branch=cover-check
 
-Create the uid(unqiue identifier) attribute in your model or class.
+Create the uid(unique identifier) attribute in your model or class.
 
 ## Installation
 
@@ -90,13 +90,17 @@ The uid is read only by default. You can disabled it with `read_only: false`.
 
 ## Options for ActiveRecord
 
-### Uniqueness and Presence Validation
+### Presence
 
-The uniqueness and presence validation is enabled by default. You can disable them with `uniqueness: false` and `presence: false`. Note that you should change your migration as well if needed.
+The presence validation is enabled by default. You can disable them with `presence: false`.
+
+### Uniqueness
+
+There are three options for the uniqueness validation - `:create`, `:always`, `:none`. `:create` is the default option, it means only check the uniqueness when creating a record. `:always` means doing uniqueness validation each time when the model is saved. `:none` means the uniqueness validation is disabled. Note that you should change your migration to support uniqueness as well if needed.
 
 ### Set to_param
 
-If the option `set_to_param: true` is given, the `to_param` is overrided with uid and it means you can use uid in your routes path.
+If the option `set_to_param: true` is given, the `to_param` is overridden with uid and it means you can use uid in your routes path.
 
 ### Scope
 
