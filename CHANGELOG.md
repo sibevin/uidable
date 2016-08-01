@@ -1,6 +1,8 @@
 # Change Log
 
-## [Unreleased]
+## [2.0.1] - 2016-08-01
+### Changed
+- Support true/false option in uniqueness validation.
 ### Added
 - Add CHANGELOG.md
 
