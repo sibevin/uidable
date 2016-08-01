@@ -35,8 +35,8 @@ module Uidable
         set_to_param: false,
         scope: false)
       unless uidable_cols.include?(uid_name.to_sym)
-        uniqueness_check = case (uniqueness.to_sym)
-                           when :create then "base.validates :'#{uid_name}', uniqueness: true, on: :create"
+        uniqueness_check = case (uniqueness.to_s.to_sym)
+                           when :create, :true then "base.validates :'#{uid_name}', uniqueness: true, on: :create"
                            when :always then "base.validates :'#{uid_name}', uniqueness: true"
                            else ''
         end
