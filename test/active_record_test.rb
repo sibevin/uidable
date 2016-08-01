@@ -39,6 +39,14 @@ ActiveRecord::Base.connection.instance_eval do
     t.string :uid, null: false
   end
 
+  create_table :user71s do |t|
+    t.string :uid, null: false
+  end
+
+  create_table :user72s do |t|
+    t.string :uid, null: false
+  end
+
   create_table :user8s do |t|
     t.string :uid, null: false
   end
@@ -111,6 +119,24 @@ end
 class User7 < ActiveRecord::Base
   include Uidable
   uidable uniqueness: :none, read_only: false
+end
+
+class User71 < ActiveRecord::Base
+  include Uidable
+  uidable uniqueness: true
+
+  def gen_uid
+    'same_uid'
+  end
+end
+
+class User72 < ActiveRecord::Base
+  include Uidable
+  uidable uniqueness: false
+
+  def gen_uid
+    'same_uid'
+  end
 end
 
 class User8 < ActiveRecord::Base
@@ -229,6 +255,18 @@ describe Uidable do
       u = User7.create
       u2 = User7.create
       u2.uid = u.uid
+      u2.valid?.must_equal true
+    end
+
+    it 'should check uniqueness when the record is created if uniqueness is true' do
+      u = User71.create
+      u2 = User71.create
+      u2.valid?.must_equal false
+    end
+
+    it 'can assign uid with existing one if uniqueness is true' do
+      u = User72.create
+      u2 = User72.create
       u2.valid?.must_equal true
     end
   end
