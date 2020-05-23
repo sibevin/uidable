@@ -9,8 +9,6 @@ module Uidable
       base.prepend InitUid
     end
 
-    private
-
     def uidable_cols_init
       self.class.uidable_cols.each do |col|
         instance_variable_set("@#{col}", send("gen_#{col}"))
@@ -46,7 +44,7 @@ module Uidable
           def self.included(base)
             if defined?(::ActiveRecord::Base) && base < ::ActiveRecord::Base
               base.before_validation :uidable_assign_#{uid_name}, on: :create
-              #{scope ? "base.scope :'with_#{uid_name}', -> (uid) { base.where(:'#{uid_name}' => uid) }" : ''}
+              #{scope ? "base.scope :'with_#{uid_name}', -> (uid) { where(:'#{uid_name}' => uid) }" : ''}
               #{set_to_param ? "base.include SetToParam#{uid_name}" : ''}
               #{read_only ? "base.attr_readonly :'#{uid_name}'" : ''}
             else

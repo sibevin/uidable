@@ -182,22 +182,22 @@ end
 describe Uidable do
   it 'should respond to the uid attribute' do
     u = User.new
-    u.respond_to?(:uid).must_equal true
+    expect(u.respond_to?(:uid)).must_equal true
   end
 
   it 'should assign the uid with 32-bit length string when record is created' do
     u = User.new
-    u.uid.must_equal nil
+    expect(u.uid).must_be_nil
     u.save!
-    u.uid.must_match(/^[a-z0-9]{#{Uidable::DEFAULT_UID_SIZE}}$/)
+    expect(u.uid).must_match(/^[a-z0-9]{#{Uidable::DEFAULT_UID_SIZE}}$/)
   end
 
   it 'should change the uid attribute name with given uid_name' do
     u = User2.new
-    u.respond_to?(:uid).must_equal false
-    u.must_respond_to :uuid
+    expect(u.respond_to?(:uid)).must_equal false
+    expect(u).must_respond_to :uuid
     u.save!
-    u.uuid.must_match(/^[a-z0-9]{#{Uidable::DEFAULT_UID_SIZE}}$/)
+    expect(u.uuid).must_match(/^[a-z0-9]{#{Uidable::DEFAULT_UID_SIZE}}$/)
   end
 
   describe 'read-only' do
@@ -207,7 +207,7 @@ describe Uidable do
       u.uid = 'assigned_uid'
       u.save!
       u = User.find(u.id)
-      u.uid.must_equal ori_uid
+      expect(u.uid).must_equal ori_uid
     end
 
     it 'can change uid if read-only is disabled' do
@@ -215,7 +215,7 @@ describe Uidable do
       u.uid = 'assigned_uid'
       u.save!
       u = User3.find(u.id)
-      u.uid.must_equal 'assigned_uid'
+      expect(u.uid).must_equal 'assigned_uid'
     end
   end
 
@@ -223,13 +223,13 @@ describe Uidable do
     it 'should check presence by default' do
       u = User.create
       u.uid = nil
-      u.valid?.must_equal false
+      expect(u.valid?).must_equal false
     end
 
     it 'can assign uid with nil if presence is disabled' do
       u = User4.create
       u.uid = nil
-      u.valid?.must_equal true
+      expect(u.valid?).must_equal true
     end
   end
 
@@ -237,59 +237,59 @@ describe Uidable do
     it 'should check uniqueness when the record is created by default' do
       User5.create
       u = User5.new
-      u.valid?.must_equal false
+      expect(u.valid?).must_equal false
       u2 = User.create
       u3 = User.create
       u3.uid = u2.uid
-      u3.valid?.must_equal true
+      expect(u3.valid?).must_equal true
     end
 
     it 'should check the uniqueness when the record is saved if :always option is given' do
       u = User6.create
       u2 = User6.create
       u2.uid = u.uid
-      u2.valid?.must_equal false
+      expect(u2.valid?).must_equal false
     end
 
     it 'can assign uid with existing one if uniqueness is disabled' do
       u = User7.create
       u2 = User7.create
       u2.uid = u.uid
-      u2.valid?.must_equal true
+      expect(u2.valid?).must_equal true
     end
 
     it 'should check uniqueness when the record is created if uniqueness is true' do
       u = User71.create
       u2 = User71.create
-      u2.valid?.must_equal false
+      expect(u2.valid?).must_equal false
     end
 
     it 'can assign uid with existing one if uniqueness is true' do
       u = User72.create
       u2 = User72.create
-      u2.valid?.must_equal true
+      expect(u2.valid?).must_equal true
     end
   end
 
   describe 'set_to_param' do
     it 'should use id as param by default' do
       u = User.create
-      u.to_param.must_equal u.id.to_s
+      expect(u.to_param).must_equal u.id.to_s
     end
 
     it 'should use uid as param if set_to_param is enabled' do
       u = User8.create
-      u.to_param.must_equal u.uid
+      expect(u.to_param).must_equal u.uid
     end
   end
 
   describe 'scope' do
     it 'should have no with_uid scope by default' do
-      User.respond_to?(:with_uid).must_equal false
+      expect(User.respond_to?(:with_uid)).must_equal false
     end
 
     it 'should have the with_uid scope if scope is enabled' do
-      User9.must_respond_to :with_uid
+      expect(User9).must_respond_to :with_uid
     end
 
     it 'should find a record with uid by the with_uid scope' do
@@ -298,58 +298,58 @@ describe Uidable do
       User9.create
       User9.create
       found_u = User9.with_uid(u.uid).take
-      found_u.id.must_equal u.id
-      found_u.uid.must_equal u.uid
+      expect(found_u.id).must_equal u.id
+      expect(found_u.uid).must_equal u.uid
     end
 
     it 'should have the scope with the changed uid name if uid_name is given and scope is enabled' do
-      User10.must_respond_to :with_uuid
+      expect(User10).must_respond_to :with_uuid
       u = User10.create
       User10.create
       User10.create
       User10.create
       found_u = User10.with_uuid(u.uuid).take
-      found_u.id.must_equal u.id
-      found_u.uuid.must_equal u.uuid
+      expect(found_u.id).must_equal u.id
+      expect(found_u.uuid).must_equal u.uuid
     end
   end
 
   it 'can override uid generation by given a customized gen_uid method' do
     u = User11.create
-    u.uid.size.must_equal User11::UID_SIZE
-    u.uid.must_match(/^[0-9]{#{User11::UID_SIZE}}$/)
+    expect(u.uid.size).must_equal User11::UID_SIZE
+    expect(u.uid).must_match(/^[0-9]{#{User11::UID_SIZE}}$/)
   end
 
   describe 'multi' do
     it 'should respond to the uid attribute' do
       u = MultiUser.new
-      u.respond_to?(:uid).must_equal true
-      u.respond_to?(:slug).must_equal true
+      expect(u.respond_to?(:uid)).must_equal true
+      expect(u.respond_to?(:slug)).must_equal true
     end
 
     it 'should assign the uid with 32-bit length string when record is created' do
       u = MultiUser.new
-      u.uid.must_equal nil
-      u.slug.must_equal nil
+      expect(u.uid).must_be_nil
+      expect(u.slug).must_be_nil
       u.save!
-      u.uid.must_match(/^[a-z0-9]{#{Uidable::DEFAULT_UID_SIZE}}$/)
-      u.slug.must_match(/^[a-z0-9]{#{Uidable::DEFAULT_UID_SIZE}}$/)
-      u.uid.wont_equal u.slug
+      expect(u.uid).must_match(/^[a-z0-9]{#{Uidable::DEFAULT_UID_SIZE}}$/)
+      expect(u.slug).must_match(/^[a-z0-9]{#{Uidable::DEFAULT_UID_SIZE}}$/)
+      expect(u.uid).wont_equal u.slug
     end
 
     it 'should change the uid attribute name with given uid_name' do
       u = MultiUser2.new
-      u.respond_to?(:uid).must_equal false
-      u.must_respond_to :uuid
-      u.must_respond_to :slug
+      expect(u.respond_to?(:uid)).must_equal false
+      expect(u).must_respond_to :uuid
+      expect(u).must_respond_to :slug
       u.save!
-      u.slug.must_match(/^[a-z0-9]{#{Uidable::DEFAULT_UID_SIZE}}$/)
+      expect(u.slug).must_match(/^[a-z0-9]{#{Uidable::DEFAULT_UID_SIZE}}$/)
     end
 
     it 'can override uid generation by given a customized gen_uid method' do
       u = MultiUser2.create
-      u.uuid.size.must_equal MultiUser2::UID_SIZE
-      u.uuid.must_match(/^[0-9]{#{MultiUser2::UID_SIZE}}$/)
+      expect(u.uuid.size).must_equal MultiUser2::UID_SIZE
+      expect(u.uuid).must_match(/^[0-9]{#{MultiUser2::UID_SIZE}}$/)
     end
   end
 end
