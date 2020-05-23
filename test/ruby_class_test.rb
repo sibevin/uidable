@@ -41,65 +41,65 @@ end
 describe Uidable do
   it "should respond to the uid attribute" do
     a = Admin.new
-    a.respond_to?(:uid).must_equal true
+    expect(a.respond_to?(:uid)).must_equal true
   end
 
   it "should assign the uid with 32-bit length string when object is initalized" do
     a = Admin.new
-    a.uid.must_match(/^[a-z0-9]{#{Uidable::DEFAULT_UID_SIZE}}$/)
+    expect(a.uid).must_match(/^[a-z0-9]{#{Uidable::DEFAULT_UID_SIZE}}$/)
   end
 
   it 'should change the uid attribute name with given uid_name' do
     a = Admin2.new
-    a.respond_to?(:uid).must_equal false
-    a.must_respond_to :uuid
-    a.uuid.must_match(/^[a-z0-9]{#{Uidable::DEFAULT_UID_SIZE}}$/)
+    expect(a.respond_to?(:uid)).must_equal false
+    expect(a).must_respond_to :uuid
+    expect(a.uuid).must_match(/^[a-z0-9]{#{Uidable::DEFAULT_UID_SIZE}}$/)
   end
 
   describe "read-only" do
     it "should be read-only by default" do
       a = Admin.new
-      proc { a.uid = "assigned_uid" }.must_raise NoMethodError
+      expect { a.uid = "assigned_uid" }.must_raise NoMethodError
     end
 
     it "can change uid if read-only is disabled" do
       a = Admin3.new
       a.uid = "assigned_uid"
-      a.uid.must_equal "assigned_uid"
+      expect(a.uid).must_equal "assigned_uid"
     end
   end
 
   it "can override uid generation by given a customized gen_uid method" do
     a = Admin4.new
-    a.uid.size.must_equal Admin4::UID_SIZE
-    a.uid.must_match(/^[0-9]{#{Admin4::UID_SIZE}}$/)
+    expect(a.uid.size).must_equal Admin4::UID_SIZE
+    expect(a.uid).must_match(/^[0-9]{#{Admin4::UID_SIZE}}$/)
   end
 
   describe "multi" do
     it "should respond to the uid attribute" do
       a = MultiAdmin.new
-      a.respond_to?(:uid).must_equal true
-      a.respond_to?(:slug).must_equal true
+      expect(a.respond_to?(:uid)).must_equal true
+      expect(a.respond_to?(:slug)).must_equal true
     end
 
     it "should assign the uid with 32-bit length string when object is initalized" do
       a = MultiAdmin.new
-      a.uid.must_match(/^[a-z0-9]{#{Uidable::DEFAULT_UID_SIZE}}$/)
-      a.slug.must_match(/^[a-z0-9]{#{Uidable::DEFAULT_UID_SIZE}}$/)
-      a.uid.wont_equal a.slug
+      expect(a.uid).must_match(/^[a-z0-9]{#{Uidable::DEFAULT_UID_SIZE}}$/)
+      expect(a.slug).must_match(/^[a-z0-9]{#{Uidable::DEFAULT_UID_SIZE}}$/)
+      expect(a.uid).wont_equal a.slug
     end
 
     it 'should change the uid attribute name with given uid_name' do
       a = MultiAdmin2.new
-      a.respond_to?(:uid).must_equal false
-      a.must_respond_to :uuid
-      a.slug.must_match(/^[a-z0-9]{#{Uidable::DEFAULT_UID_SIZE}}$/)
+      expect(a.respond_to?(:uid)).must_equal false
+      expect(a).must_respond_to :uuid
+      expect(a.slug).must_match(/^[a-z0-9]{#{Uidable::DEFAULT_UID_SIZE}}$/)
     end
 
     it "can override uid generation by given a customized gen_uid method" do
       a = MultiAdmin2.new
-      a.uuid.size.must_equal MultiAdmin2::UID_SIZE
-      a.uuid.must_match(/^[0-9]{#{MultiAdmin2::UID_SIZE}}$/)
+      expect(a.uuid.size).must_equal MultiAdmin2::UID_SIZE
+      expect(a.uuid).must_match(/^[0-9]{#{MultiAdmin2::UID_SIZE}}$/)
     end
   end
 end
